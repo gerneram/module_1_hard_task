@@ -1,5 +1,9 @@
 package cache
 
+import (
+	"sync"
+)
+
 // Interface - реализуйте этот интерфейс
 type Interface interface {
 	Set(k, v string)
@@ -10,20 +14,29 @@ type Interface interface {
 
 type Cache struct {
 	// TODO: ваш код
+	data map[string]string
+	mu   sync.RWMutex
 }
 
 // NewCache создаёт и возвращает новый экземпляр Cache.
 func NewCache() Interface {
 	// TODO: ваш код
-	panic("implement me")
+	return &Cache{
+		data: make(map[string]string),
+	}
 }
 
-func (c Cache) Set(k, v string) {
+func (c *Cache) Set(k, v string) {
 	// TODO implement me
-	panic("implement me")
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.data[k] = v
 }
 
-func (c Cache) Get(k string) (v string, ok bool) {
+func (c *Cache) Get(k string) (v string, ok bool) {
 	// TODO implement me
-	panic("implement me")
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	val, ok := c.data[k]
+	return val, ok
 }
